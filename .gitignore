@@ -33,4 +33,4 @@ build/
 .vscode/
 
 # Security: Ignore environment variables
-.env
+*.env
