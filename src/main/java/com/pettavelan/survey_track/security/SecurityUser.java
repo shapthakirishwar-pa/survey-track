@@ -3,7 +3,9 @@ package com.pettavelan.survey_track.security;
 import com.pettavelan.survey_track.entity.User;
 import com.pettavelan.survey_track.enums.UserStatus;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Getter
 public class SecurityUser implements UserDetails {
 	private static final long serialVersionUID = 1L;
 	private final User user;
