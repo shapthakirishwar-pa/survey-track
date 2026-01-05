@@ -24,20 +24,11 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody AuthRegistrationRequest request) {
-        try {
-            User savedUser = userService.registerUser(request);
-            return ResponseEntity.ok(new AuthResponse(
-                            "Registration successful",
-                            "SUCCESS",
-                            savedUser.getEmail()
-            ));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest()
-                    .body(new AuthResponse(
-                            e.getMessage(),
-                            "FAIL",
-                            request.email())
-                    );
-        }
+        User savedUser = userService.registerUser(request);
+        return ResponseEntity.ok(new AuthResponse(
+                "Registration successful",
+                "SUCCESS",
+                savedUser.getEmail()
+        ));
     }
 }

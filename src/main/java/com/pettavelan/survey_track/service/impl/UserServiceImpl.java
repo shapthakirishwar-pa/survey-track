@@ -27,11 +27,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerUser(AuthRegistrationRequest request) {
         if (userRepository.findByEmail(request.email()).isPresent()) {
-            throw new RuntimeException("Email already in use!");
-        }
-
-        if (request.department() == null) {
-            throw new IllegalArgumentException("Department cannot be empty");
+            throw new RuntimeException("Error: Email is already registered!");
         }
 
         Department department = Department.valueOf(request.department().toUpperCase());
