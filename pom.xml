@@ -28,6 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+        <spring-restdocs.version>3.0.2</spring-restdocs.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -121,11 +122,11 @@
 					</execution>
 				</executions>
 				<dependencies>
-					<dependency>
-						<groupId>org.springframework.restdocs</groupId>
-						<artifactId>spring-restdocs-asciidoctor</artifactId>
-						<version>${spring-restdocs.version}</version>
-					</dependency>
+<!--					<dependency>-->
+<!--						<groupId>org.springframework.restdocs</groupId>-->
+<!--						<artifactId>spring-restdocs-asciidoctor</artifactId>-->
+<!--						<version>${spring-restdocs.version}</version>-->
+<!--					</dependency>-->
 				</dependencies>
 			</plugin>
 			<plugin>
