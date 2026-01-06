@@ -19,12 +19,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -157,6 +159,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changeUserStatus(Long userId, UserStatus status) {
+        User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
+        user.setStatus(status);
+        userRepository.save(user);
+
+        logoutAllSessions(user);
+    }
+
+    @Transactional
+    public void logout(String refreshToken) {
+        refreshTokenRepository.findByToken(refreshToken)
+                .ifPresent(refreshTokenRepository::delete);
+    }
+
+    @Transactional
+    public void logoutAllSessions(User user) {
+        // Logout from all devices or Password Resets
+        refreshTokenRepository.deleteByUser(user);
     }
 }

@@ -33,16 +33,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request, HttpServletResponse response) {
         AuthData authData = userService.login(request);
-
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", authData.refreshToken())
-                .httpOnly(true)
-                .secure(false) // set to be 'false' when at localhost, 'true' when HTTPS/SSL
-                .path("/")
-                .maxAge(7 * 24 * 60 * 60)
-                .sameSite("Strict")
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        setRefreshTokenCookie(response, authData.refreshToken(), 7 * 24 * 60 * 60);
 
         return ResponseEntity.ok(new LoginResponse(
                 authData.accessToken(),
@@ -62,5 +53,29 @@ public class AuthController {
                 data.role(),
                 "SUCCESS"
         ));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(
+            @CookieValue(name = "refreshToken", required = false) String refreshToken,
+            HttpServletResponse response
+    ) {
+        if (refreshToken != null) {
+            userService.logout(refreshToken);
+        }
+
+        setRefreshTokenCookie(response, "", 0);
+        return ResponseEntity.noContent().build();
+    }
+
+    private void setRefreshTokenCookie(HttpServletResponse response, String token, int maxAge) {
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", token)
+                .httpOnly(true)
+                .secure(false) // Toggle to true in production (HTTPS)
+                .path("/")
+                .maxAge(maxAge)
+                .sameSite("Strict")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 }
