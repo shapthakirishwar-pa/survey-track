@@ -113,20 +113,21 @@ public class UserServiceImpl implements UserService {
     }
 
     public AuthData refreshAccessToken(String refreshTokenRequest) {
-        return refreshTokenRepository.findByToken(refreshTokenRequest)
-                .map(this::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .map(user -> {
-                    String newAccessToken = jwtService.generateToken(new SecurityUser(user));
-
-                    return new AuthData(
-                            newAccessToken,
-                            refreshTokenRequest, // Keep the same refresh token
-                            user.getEmail(),
-                            user.getRole().name()
-                    );
-                })
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(refreshTokenRequest)
                 .orElseThrow(() -> new RuntimeException("Refresh token not found! Please log in again."));
+
+        verifyExpiration(refreshToken);
+
+        User user = refreshToken.getUser();
+
+        String newAccessToken = jwtService.generateToken(new SecurityUser(user));
+
+        return new AuthData(
+                newAccessToken,
+                refreshTokenRequest,
+                user.getEmail(),
+                user.getRole().name()
+        );
     }
 
     private RefreshToken verifyExpiration(RefreshToken token) {
